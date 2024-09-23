@@ -86,11 +86,14 @@ class Scene {
 public:
 	Scene(const string& n) :name(n) {}
 
-	void SetDisplay() {
+	void SetDisplay(int px,int py) {
 		if (name == "before deongeon") {
 			for (int y = 0; y < 20; y++) {
 				for (int x = 0; x < 20; x++) {
-					if (y == 0 || y == 19) {
+					if (x == px && y == py) {
+						tile[y][x] = '0';
+					}
+					else if (y == 0 || y == 19) {
 						tile[y][x] = '-';
 					}
 					else if (x == 0 || x == 19) {
@@ -105,7 +108,10 @@ public:
 		else if (name == "deongeon") {
 			for (int y = 0; y < 20; y++) {
 				for (int x = 0; x < 20; x++) {
-					if (y == 0 || y == 19) {
+					if (x == px && y == py) {
+						tile[y][x] = '0';
+					}
+					else if (y == 0 || y == 19) {
 						tile[y][x] = '=';
 					}
 					else if (x == 0 || x == 19) {
@@ -134,6 +140,7 @@ class SceneManager {
 	map<string, Scene*>scenes;
 	Scene* currentScene;
 	string currentSceneName;
+	int px=0, py=0;
 public:
 	// 기본생성자에서 현재 씬 객체는 비어있고, 이름은 string으로 정해져 있다. 이유는?
 	SceneManager() :currentScene(nullptr), currentSceneName("") {}
@@ -157,11 +164,16 @@ public:
 		// 예외처리 : 씬이 없을 경우
 	}
 
-	void ShowCurrentScene()const {
+	void SetPlayerXY(int x, int y) {
+		px = x;
+		py = y;
+	}
+
+	void ShowCurrentScene() {
 		// 예외처리 : 현재 씬이 설정되지 않았을 경우
 		cout << "현재 씬 이름 : " << currentSceneName << endl;
 		cout << "현재 씬 화면 : \n";
-		currentScene->SetDisplay();
+		currentScene->SetDisplay(px,py);
 		currentScene->DisplayScene();
 	}
 };
@@ -178,14 +190,17 @@ int main() {
 	int px = 0, py = 0;
 	int dx = 10, dy = 0;	// 던전 위치
 
+	sceneManager->SetPlayerXY(px, py);
+
 	sceneManager->SetCurrentScene("before deongeon");
 	sceneManager->ShowCurrentScene();	
 
 	while (px != dx || py != dy) {
-
+		// 키를 받아와서 씬으로 보내야함. 그냥 씬에서 받을까 그럼?
 		p->InputKey();
 		px = p->GetPlayerX();
 		py = p->GetPlayerY();
+		sceneManager->SetPlayerXY(px, py);
 	}	
 
 	sceneManager->SetCurrentScene("deongeon");
