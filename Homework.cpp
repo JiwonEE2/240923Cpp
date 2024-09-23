@@ -28,6 +28,35 @@ enum class STATE {
 	IDLE, UP, LEFT, RIGHT, DOWN
 };
 
+class Tile {
+	// 쉽게 2차원 배열로 하자
+	char tile[20][20];
+public:
+	Tile() {
+		for (int y = 0; y < 20; y++) {
+			for (int x = 0; x < 20; x++) {
+				if (y == 0 || y == 19) {
+					tile[y][x] = '-';
+				}
+				else if (x == 0 || x == 19) {
+					tile[y][x] = '|';
+				}
+				else {
+					tile[y][x] = ' ';
+				}
+			}
+		}
+	}
+	void DisplayTile() {
+		for (int y = 0; y < 20; y++) {
+			for (int x = 0; x < 20; x++) {
+				cout << tile[y][x];
+			}
+			cout << "\n";
+		}
+	}
+};
+
 class Player {
 	STATE state;
 	int x, y;
@@ -84,6 +113,7 @@ class Scene {
 	string desc;
 	string display;
 	string name;
+	Tile* t;
 public:
 	Scene() :desc("(씬 설명)"), display("(씬 화면)") {}
 	Scene(const string& desc, const string& dis) :desc(desc), display(dis) {}
@@ -94,11 +124,7 @@ public:
 	}
 	void DisplayScene()const {
 		if (name == "before deongeon") {
-			cout << "=================================\n";
-			for (int i = 0; i < 20; i++) {
-				cout << "|                               |\n";
-			}
-			cout << "=================================\n";
+			t->DisplayTile();
 		}
 		else if (name == "deongeon") {
 

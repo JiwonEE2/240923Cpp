@@ -1,84 +1,168 @@
 #include<iostream>
 #include<map>
+#include<conio.h>
 using namespace std;
 
-class Scene {
-	string desc;
-public:
-	Scene() :desc("") {}
-	Scene(const string& d) :desc(d) {}
+enum class STATE {
+	IDLE, UP, LEFT, RIGHT, DOWN
+};
 
-	string GetDescription()const {
-		return desc;
+class Tile {
+	// 쉽게 2차원 배열로 하자
+	char tile[20][20];
+public:
+	Tile() {
+		for (int y = 0; y < 20; y++) {
+			for (int x = 0; x < 20; x++) {
+				if (y == 0 || y == 19) {
+					tile[y][x] = '-';
+				}
+				else if (x == 0 || x == 19) {
+					tile[y][x] = '|';
+				}
+				else {
+					tile[y][x] = ' ';
+				}
+			}
+		}
+	}
+	void DisplayTile() {
+		for (int y = 0; y < 20; y++) {
+			for (int x = 0; x < 20; x++) {
+				cout << tile[y][x];
+			}
+			cout << "\n";
+		}
+	}
+};
+
+class Player {
+	STATE state;
+	int x, y;
+	char key;
+public:
+	Player() {
+		x = 0;
+		y = 0;
+	}
+	void InputKey() {
+		key = _getch();
+		switch (key) {
+		case 72:			// 상
+			state = STATE::UP;
+			y++;
+			cout << x << ", " << y;
+			cout << "\t상\n";
+			break;
+		case 75:			// 좌
+			state = STATE::LEFT;
+			x--;
+			cout << x << ", " << y;
+			cout << "\t좌\n";
+			break;
+		case 77:			// 우
+			state = STATE::RIGHT;
+			x++;
+			cout << x << ", " << y;
+			cout << "\t우\n";
+			break;
+		case 80:			// 하
+			state = STATE::DOWN;
+			y--;
+			cout << x << ", " << y;
+			cout << "\t하\n";
+			break;
+		}
+	}
+	int GetPlayerX() {
+		return x;
+	}
+	int GetPlayerY() {
+		return y;
+	}
+};
+
+
+// 씬 이름을 키로 씬 객체를 밸류로 map을 생성하였다.
+// 씬 객체에서는 이름은 없고 설명만 있다.
+// 씬 객체에서 이름을 설정하지 않은 이유가 있을 것 같다.
+// 뭔가 알것 같은데..
+// 다음에 알아보자
+class Scene {
+	string name;
+	Tile* t;
+public:
+	Scene() :name("(씬 이름)") {}
+	Scene(const string& n) :name(n) {
+		t;
+	}
+
+	void DisplayScene()const {
+		if (name == "before deongeon") {
+			t->DisplayTile();
+		}
+		else if (name == "deongeon") {
+
+		}
 	}
 };
 
 class SceneManager {
-	// 씬의 이름을 키로 하고 씬 포인터를 값으로 저장하는 map
 	map<string, Scene*>scenes;
-	Scene* currentScene;		// 현재 씬을 가리키는 포인터
-	string currentSceneName;	// 현재 씬의 이름
+	Scene* currentScene;
+	string currentSceneName;
 public:
+	// 기본생성자에서 현재 씬 객체는 비어있고, 이름은 string으로 정해져 있다. 이유는?
 	SceneManager() :currentScene(nullptr), currentSceneName("") {}
-	~SceneManager() {
-		// map에저장된 모든 씬을 돌면서 해제
+	// 소멸자와 씬 삭제 함수의 차이?
+	/*~SceneManager() {
 		for (auto& pair : scenes) {
 			delete pair.second;
 		}
-	}
+	}*/
 
-	// 씬을 추가하는 함수
 	void AddScene(const string& name, Scene* scene) {
-		scenes[name] = scene;			// 씬의 이름을 키값으로 하고 포인터를 값으로 조정
+		scenes[name] = scene;
 	}
-	// 씬을 삭제하는 함수
-	void RemoveScene(const string& name) {
-		auto it = scenes.find(name);	// 씬 이름으로 map에서 찾기
-		// 씬이 존재하면
-		if (it != scenes.end()) {
-			delete it->second;			// 동적으로 할당된 씬 객체 해제
-			scenes.erase(it);			// map에서 삭제
-		}
-	}
-	// 현재 씬을 설정하는 함수
+
 	void SetCurrentScene(const string& name) {
-		auto it = scenes.find(name);	// 씬 이름을 map에서 찾기
+		auto it = scenes.find(name);
 		if (it != scenes.end()) {
-			currentScene = it->second;
-			currentSceneName = name;
+			currentScene = it->second;	// 씬 객체
+			currentSceneName = name;	// 씬 이름
 		}
-		else {
-			cout << "씬을 찾을 수 없음" << endl;
-		}
+		// 예외처리 : 씬이 없을 경우
 	}
-	// 출력하는 함수
+
 	void ShowCurrentScene()const {
-		if (currentSceneName.empty()) {
-			cout << "설정되지 않음" << endl;
-			return;
-		}
-		cout << "현재 씬 : " << currentSceneName << endl;
-		cout << "씬 설명 : " << currentScene->GetDescription() << endl;
-
-		cout << "==================================================" << endl;
-
+		// 예외처리 : 현재 씬이 설정되지 않았을 경우
+		cout << "현재 씬 이름 : " << currentSceneName << endl;
+		cout << "현재 씬 화면 : \n";
+		currentScene->DisplayScene();
 	}
 };
 
 int main() {
 	SceneManager* sceneManager = new SceneManager();
 
-	sceneManager->AddScene("MainMenu", new Scene("메인메뉴 : 시작, 옵션, 종료"));
-	sceneManager->AddScene("Level1", new Scene("레벨 1 : 첫번째 레벨"));
+	// 포인터라서 화살표
+	sceneManager->AddScene("before deongeon", new Scene("before deongeon"));
+	sceneManager->AddScene("deongeon", new Scene("deongeon"));
 
-	sceneManager->SetCurrentScene("MainMenu");	// 현재 씬 설정
+	sceneManager->SetCurrentScene("before deongeon");
 	sceneManager->ShowCurrentScene();
 
-	sceneManager->SetCurrentScene("Level1");
-	sceneManager->ShowCurrentScene();
+	Player* p = new Player();
 
-	sceneManager->RemoveScene("MainMenu");
+	int px = 0, py = 0;
+	int dx = 10, dy = 0;	// 던전 위치
 
-	sceneManager->SetCurrentScene("ㅇㅇㅇ");
+	while (px != dx || py != dy) {
+		p->InputKey();
+		px = p->GetPlayerX();
+		py = p->GetPlayerY();
+	}
+
+	sceneManager->SetCurrentScene("deongeon");
 	sceneManager->ShowCurrentScene();
 }
