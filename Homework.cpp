@@ -77,24 +77,25 @@ public:
 		key = _getch();
 		switch (key) {
 		case 72:			// 상
-			py--;
-			cout << px << ", " << py;
-			cout << "\t상\n";
+			// 키 조정
+			if (tile[py - 1][px] == ' ') {
+				py--;
+			}
 			break;
 		case 75:			// 좌
-			px--;
-			cout << px << ", " << py;
-			cout << "\t좌\n";
+			if (tile[py][px-1] == ' ') {
+				px--;
+			}
 			break;
 		case 77:			// 우
-			px++;
-			cout << px << ", " << py;
-			cout << "\t우\n";
+			if (tile[py][px + 1] == ' ') {
+				px++;
+			}
 			break;
 		case 80:			// 하
-			py++;
-			cout << px << ", " << py;
-			cout << "\t하\n";
+			if (tile[py + 1][px] == ' ') {
+				py++;
+			}
 			break;
 		}
 		key = 0;
