@@ -84,6 +84,7 @@ class Scene {
 	string desc;
 	string display;
 	string name;
+	char tile[20][20];
 public:
 	Scene() :desc("(씬 설명)"), display("(씬 화면)") {}
 	Scene(const string& desc, const string& dis) :desc(desc), display(dis) {}
@@ -92,16 +93,46 @@ public:
 	string GetDescription()const {
 		return desc;
 	}
-	void DisplayScene()const {
+	void SetDisplay() {
 		if (name == "before deongeon") {
-			cout << "=================================\n";
-			for (int i = 0; i < 20; i++) {
-				cout << "|                               |\n";
+			for (int y = 0; y < 20; y++) {
+				for (int x = 0; x < 20; x++) {
+					if (y == 0 || y == 19) {
+						tile[y][x] = '-';
+					}
+					else if (x == 0 || x == 19) {
+						tile[y][x] = '|';
+					}
+					else {
+						tile[y][x] = ' ';
+					}
+				}
 			}
-			cout << "=================================\n";
 		}
 		else if (name == "deongeon") {
+			for (int y = 0; y < 20; y++) {
+				for (int x = 0; x < 20; x++) {
+					if (y == 0 || y == 19) {
+						tile[y][x] = '=';
+					}
+					else if (x == 0 || x == 19) {
+						tile[y][x] = '|';
+					}
+					else {
+						tile[y][x] = ' ';
+					}
+				}
+			}
+		}
+	}
 
+	void DisplayScene() {
+		
+		for (int y = 0; y < 20; y++) {
+			for (int x = 0; x < 20; x++) {
+				cout << tile[y][x];
+			}
+			cout << "\n";
 		}
 	}
 };
@@ -138,6 +169,7 @@ public:
 		cout << "현재 씬 이름 : " << currentSceneName << endl;
 		cout << "현재 씬 설명 : " << currentScene->GetDescription() << endl;
 		cout << "현재 씬 화면 : \n";
+		currentScene->SetDisplay();
 		currentScene->DisplayScene();
 	}
 };
@@ -148,7 +180,7 @@ int main() {
 	// 포인터라서 화살표
 	sceneManager->AddScene("before deongeon", new Scene("before deongeon"));
 	// sceneManager->AddScene("before deongeon", new Scene("던전 들어가기 전 장애물이 있는 씬", "--"));
-	sceneManager->AddScene("deongeon", new Scene("던전","00"));
+	sceneManager->AddScene("deongeon", new Scene("deongeon"));
 
 	sceneManager->SetCurrentScene("before deongeon");
 	sceneManager->ShowCurrentScene();
