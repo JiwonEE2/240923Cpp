@@ -81,18 +81,11 @@ public:
 // 뭔가 알것 같은데..
 // 다음에 알아보자
 class Scene {
-	string desc;
-	string display;
 	string name;
 	char tile[20][20];
 public:
-	Scene() :desc("(씬 설명)"), display("(씬 화면)") {}
-	Scene(const string& desc, const string& dis) :desc(desc), display(dis) {}
 	Scene(const string& n) :name(n) {}
 
-	string GetDescription()const {
-		return desc;
-	}
 	void SetDisplay() {
 		if (name == "before deongeon") {
 			for (int y = 0; y < 20; y++) {
@@ -167,7 +160,6 @@ public:
 	void ShowCurrentScene()const {
 		// 예외처리 : 현재 씬이 설정되지 않았을 경우
 		cout << "현재 씬 이름 : " << currentSceneName << endl;
-		cout << "현재 씬 설명 : " << currentScene->GetDescription() << endl;
 		cout << "현재 씬 화면 : \n";
 		currentScene->SetDisplay();
 		currentScene->DisplayScene();
@@ -179,22 +171,22 @@ int main() {
 
 	// 포인터라서 화살표
 	sceneManager->AddScene("before deongeon", new Scene("before deongeon"));
-	// sceneManager->AddScene("before deongeon", new Scene("던전 들어가기 전 장애물이 있는 씬", "--"));
 	sceneManager->AddScene("deongeon", new Scene("deongeon"));
-
-	sceneManager->SetCurrentScene("before deongeon");
-	sceneManager->ShowCurrentScene();
-
+	
 	Player* p = new Player();
 
 	int px = 0, py = 0;
 	int dx = 10, dy = 0;	// 던전 위치
 
+	sceneManager->SetCurrentScene("before deongeon");
+	sceneManager->ShowCurrentScene();	
+
 	while (px != dx || py != dy) {
+
 		p->InputKey();
 		px = p->GetPlayerX();
 		py = p->GetPlayerY();
-	}
+	}	
 
 	sceneManager->SetCurrentScene("deongeon");
 	sceneManager->ShowCurrentScene();
