@@ -68,6 +68,8 @@ class Scene {
 	char tile[20][20];		// 씬 화면
 	int px = 1, py = 1;		// 플레이어 위치
 	int dx = 9, dy = 1;		// 던전 위치
+	int ox[30], oy[30];		// 장애물 배열
+
 public:
 	Scene() :sceneNum(1) {}
 	Scene(int num) :sceneNum(num) {}
@@ -78,22 +80,22 @@ public:
 		switch (key) {
 		case 72:			// 상
 			// 키 조정
-			if (tile[py - 1][px] == ' ') {
+			if (tile[py - 1][px] == ' ' || tile[py - 1][px] == '#') {
 				py--;
 			}
 			break;
 		case 75:			// 좌
-			if (tile[py][px-1] == ' ') {
+			if (tile[py][px - 1] == ' ' || tile[py][px - 1] == '#') {
 				px--;
 			}
 			break;
 		case 77:			// 우
-			if (tile[py][px + 1] == ' ') {
+			if (tile[py][px + 1] == ' ' || tile[py][px + 1] == '#') {
 				px++;
 			}
 			break;
 		case 80:			// 하
-			if (tile[py + 1][px] == ' ') {
+			if (tile[py + 1][px] == ' ' || tile[py + 1][px] == '#') {
 				py++;
 			}
 			break;
@@ -101,21 +103,33 @@ public:
 		key = 0;
 	}
 
+	// 장애물 설치 함수
+	void CreateObstacle() {
+		for (int i = 0; i < 30; i++) {
+			ox[i] = rand() % 18 + 1;
+			oy[i] = rand() % 18 + 1;
+		}
+	}
+
 	// 플레이어 위치에 따른 화면 세팅
 	void SetDisplay() {
 		for (int y = 0; y < 20; y++) {
 			for (int x = 0; x < 20; x++) {
-				if (x == px && y == py) {
-					tile[y][x] = '0';
-				}
-				else if (y == 0 || y == 19) {
-					tile[y][x] = '-';
-				}
-				else if (x == 0 || x == 19) {
-					tile[y][x] = '|';
-				}
-				else {
-					tile[y][x] = ' ';
+				for (int o = 0; o < 30; o++) {
+					tile[oy[o]][ox[o]] = 'X';
+					tile[dy][dx] = '#';
+					if (x == px && y == py) {
+						tile[y][x] = '0';
+					}
+					else if (y == 0 || y == 19) {
+						tile[y][x] = '-';
+					}
+					else if (x == 0 || x == 19) {
+						tile[y][x] = '|';
+					}
+					else {
+						tile[y][x] = ' ';
+					}
 				}
 			}
 		}
@@ -144,7 +158,7 @@ public:
 	void Loop() {
 		while (px != dx || py != dy) {
 			SetDisplay();
-			//system("cls");
+			system("cls");
 			DisplayScene();
 			InputKey();
 		}
@@ -185,6 +199,10 @@ public:
 	void ShowDisplay() {
 		currentScene->DisplayScene();
 	}
+
+	void StartObs() {
+		currentScene->CreateObstacle();
+	}
 };
 
 int main() {
@@ -198,6 +216,8 @@ int main() {
 
 	// 3. 씬 매니저로 현재 씬 1로 설정
 	sceneManager->SetCurrentScene("before deongeon");
+	srand(time(0));
+	sceneManager->StartObs();
 
 	// 4. 씬 매니저로 루프 실행
 	sceneManager->StartLoop();
