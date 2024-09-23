@@ -20,8 +20,117 @@ Sleep(300);			// 일시정지 window.h 헤더 필요
   |ㄴ
 */
 #include<iostream>
+#include<map>
+#include<conio.h>
 using namespace std;
 
-int main() {
+enum class STATE {
+	IDLE, UP, LEFT, RIGHT, DOWN
+};
 
+class Player {
+	STATE state;
+	int x, y;
+	char key;
+public:
+	Player() {
+		x = 0;
+		y = 0;
+	}
+	void InputKey() {
+		key = _getch();
+		switch (key) {
+		case 72:			// 상
+			state = STATE::UP;
+			y++;
+			cout << x << ", " << y;
+			cout << "\t상\n";
+			break;
+		case 75:			// 좌
+			state = STATE::LEFT;
+			x--;
+			cout << x << ", " << y;
+			cout << "\t좌\n";
+			break;
+		case 77:			// 우
+			state = STATE::RIGHT;
+			x++;
+			cout << x << ", " << y;
+			cout << "\t우\n";
+			break;
+		case 80:			// 하
+			state = STATE::DOWN;
+			y--;
+			cout << x << ", " << y;
+			cout << "\t하\n";
+			break;
+		}
+	}
+};
+
+
+// 씬 이름을 키로 씬 객체를 밸류로 map을 생성하였다.
+// 씬 객체에서는 이름은 없고 설명만 있다.
+// 씬 객체에서 이름을 설정하지 않은 이유가 있을 것 같다.
+// 뭔가 알것 같은데..
+// 다음에 알아보자
+class Scene {
+	string desc;
+public:
+	Scene() :desc("(씬 설명)") {}
+	Scene(const string& d) :desc(d) {}
+
+	string GetDescription()const {
+		return desc;
+	}
+};
+
+class SceneManager {
+	map<string, Scene*>scenes;
+	Scene* currentScene;
+	string currentSceneName;
+public:
+	// 기본생성자에서 현재 씬 객체는 비어있고, 이름은 string으로 정해져 있다. 이유는?
+	SceneManager() :currentScene(nullptr), currentSceneName("") {}
+	// 소멸자와 씬 삭제 함수의 차이?
+	/*~SceneManager() {
+		for (auto& pair : scenes) {
+			delete pair.second;
+		}
+	}*/
+
+	void AddScene(const string& name, Scene* scene) {
+		scenes[name] = scene;
+	}
+
+	void SetCurrentScene(const string& name) {
+		auto it = scenes.find(name);
+		if (it != scenes.end()) {
+			currentScene = it->second;	// 씬 객체
+			currentSceneName = name;	// 씬 이름
+		}
+		// 예외처리 : 씬이 없을 경우
+	}
+
+	void ShowCurrentScene()const {
+		// 예외처리 : 현재 씬이 설정되지 않았을 경우
+		cout << "현재 씬 이름 : " << currentSceneName << endl;
+		cout << "현재 씬 설명 : " << currentScene->GetDescription() << endl;
+	}
+};
+
+int main() {
+	SceneManager* sceneManager = new SceneManager();
+
+	// 포인터라서 화살표
+	sceneManager->AddScene("before deongeon", new Scene("던전 들어가기 전 장애물이 있는 씬"));
+	sceneManager->AddScene("deongeon", new Scene("던전"));
+
+	sceneManager->SetCurrentScene("before deongeon");
+	sceneManager->ShowCurrentScene();
+
+	Player* p = new Player();
+	while (true) {
+		p->InputKey();
+	}
 }
