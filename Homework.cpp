@@ -66,6 +66,12 @@ public:
 			break;
 		}
 	}
+	int GetPlayerX() {
+		return x;
+	}
+	int GetPlayerY() {
+		return y;
+	}
 };
 
 
@@ -130,7 +136,16 @@ int main() {
 	sceneManager->ShowCurrentScene();
 
 	Player* p = new Player();
-	while (true) {
+
+	int px = 0, py = 0;
+	int dx = 10, dy = 0;	// 던전 위치
+
+	while (px != dx || py != dy) {
 		p->InputKey();
+		px = p->GetPlayerX();
+		py = p->GetPlayerY();
 	}
+
+	sceneManager->SetCurrentScene("deongeon");
+	sceneManager->ShowCurrentScene();
 }
