@@ -83,15 +83,26 @@ public:
 class Scene {
 	string desc;
 	string display;
+	string name;
 public:
 	Scene() :desc("(씬 설명)"), display("(씬 화면)") {}
 	Scene(const string& desc, const string& dis) :desc(desc), display(dis) {}
+	Scene(const string& n) :name(n) {}
 
 	string GetDescription()const {
 		return desc;
 	}
-	string GetDisplay()const {
-		return display;
+	void DisplayScene()const {
+		if (name == "before deongeon") {
+			cout << "=================================\n";
+			for (int i = 0; i < 20; i++) {
+				cout << "|                               |\n";
+			}
+			cout << "=================================\n";
+		}
+		else if (name == "deongeon") {
+
+		}
 	}
 };
 
@@ -126,7 +137,8 @@ public:
 		// 예외처리 : 현재 씬이 설정되지 않았을 경우
 		cout << "현재 씬 이름 : " << currentSceneName << endl;
 		cout << "현재 씬 설명 : " << currentScene->GetDescription() << endl;
-		cout << "현재 씬 화면 : " << currentScene->GetDisplay() << endl;
+		cout << "현재 씬 화면 : \n";
+		currentScene->DisplayScene();
 	}
 };
 
@@ -134,7 +146,8 @@ int main() {
 	SceneManager* sceneManager = new SceneManager();
 
 	// 포인터라서 화살표
-	sceneManager->AddScene("before deongeon", new Scene("던전 들어가기 전 장애물이 있는 씬","--"));
+	sceneManager->AddScene("before deongeon", new Scene("before deongeon"));
+	// sceneManager->AddScene("before deongeon", new Scene("던전 들어가기 전 장애물이 있는 씬", "--"));
 	sceneManager->AddScene("deongeon", new Scene("던전","00"));
 
 	sceneManager->SetCurrentScene("before deongeon");
