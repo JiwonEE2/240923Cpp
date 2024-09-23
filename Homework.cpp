@@ -1,4 +1,36 @@
 /*
+[ 씬 응용 ]
+1. 씬 매니저 생성
+2. 씬 매니저로 첫번째, 두번째 씬 생성
+3. 씬 매니저로 현재 씬 첫번째로 설정
+4. 플레이어(1,1)와 던전(9,1) 위치 초기화
+5. 씬 매니저로 씬 출력
+6. 플레이어 == 던전 위치일 때까지
+	1) false
+		(1) 입력을 기다린다
+		(2) 키에 따라 플레이어 위치를 업데이트
+		(3) 씬 매니저로 씬 출력(지우고)
+
+	2) true
+		(1) 현재 씬을 두번째로 변경 후 두번째 씬 출력
+
+1. 씬 매니저
+	- 씬 클래스를 받아 map 생성
+	- 멤버함수
+		ㄴ 씬 생성 및 추가
+		ㄴ 현재 씬 설정
+		ㄴ 씬 출력(지우고)
+
+2. 씬
+	- 멤버변수
+		ㄴ 씬 화면
+		ㄴ 플레이어 위치
+		ㄴ 던전 위치
+	- 멤버함수
+		ㄴ 씬 출력
+
+
+
 [ 키입력 방식 ]
 1. cin -> 버퍼를 사용하기 때문에 엔터를 눌러야 하는 번거로움이 있다.
 
@@ -33,10 +65,8 @@ class Player {
 	int x, y;
 	char key;
 public:
-	Player() {
-		x = 0;
-		y = 0;
-	}
+	Player() :x(1), y(1) {}
+
 	void InputKey() {
 		key = _getch();
 		switch (key) {
@@ -66,6 +96,7 @@ public:
 			break;
 		}
 	}
+
 	int GetPlayerX() {
 		return x;
 	}
@@ -187,7 +218,9 @@ int main() {
 	
 	Player* p = new Player();
 
-	int px = 0, py = 0;
+	int px = p->GetPlayerX();
+	int py = p->GetPlayerY();
+
 	int dx = 10, dy = 0;	// 던전 위치
 
 	sceneManager->SetPlayerXY(px, py);
@@ -196,6 +229,7 @@ int main() {
 	sceneManager->ShowCurrentScene();	
 
 	while (px != dx || py != dy) {
+
 		// 키를 받아와서 씬으로 보내야함. 그냥 씬에서 받을까 그럼?
 		p->InputKey();
 		px = p->GetPlayerX();
