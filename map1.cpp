@@ -1,3 +1,4 @@
+#include "SceneManager.h"
 #include<iostream>
 #include<map>
 using namespace std;
@@ -54,6 +55,9 @@ public:
 			delete it->second;			// 동적으로 할당된 씬 객체 해제
 			scenes.erase(it);			// map에서 삭제
 		}
+	}
+	void SceneManager::AddScene(const string& name, const string& desc)
+	{
 	}
 	// 현재 씬을 설정하는 함수
 	void SetCurrentScene(const string& name) {
